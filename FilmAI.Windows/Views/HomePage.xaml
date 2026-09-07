@@ -1,0 +1,62 @@
+<Page
+    x:Class="FilmAI.Windows.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:FilmAI.Windows.Controls"
+    Background="{ThemeResource AppBackgroundBrush}">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="24">
+
+            <!-- Hero: Günün Önerisi (kural tabanlı, AI değil) -->
+            <Grid Height="320" CornerRadius="12" Background="{StaticResource CardSurfaceBrush}">
+                <Image Source="{x:Bind ViewModel.TonightsPick.BackdropPath, Mode=OneWay}" Stretch="UniformToFill" Opacity="0.5" />
+                <StackPanel VerticalAlignment="Bottom" Padding="24" Spacing="8">
+                    <TextBlock Text="GÜNÜN ÖNERİSİ" Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource GoldAccentBrush}" />
+                    <TextBlock Text="{x:Bind ViewModel.TonightsPick.Title, Mode=OneWay}" Style="{StaticResource HeroTitleStyle}" />
+                    <TextBlock Text="{x:Bind ViewModel.TonightsPick.Overview, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" MaxLines="2" />
+                    <Button Content="Detayları Gör" Style="{StaticResource AccentButtonStyle}" Click="OnTonightsPickClicked" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Trending -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Trend Olanlar" Style="{StaticResource SectionHeaderStyle}" />
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.Trending, Mode=OneWay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="12" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:MovieCard Movie="{Binding}" Clicked="OnMovieCardClicked" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+            <!-- Hidden Gems -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="Gizli Cevherler" Style="{StaticResource SectionHeaderStyle}" />
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.HiddenGems, Mode=OneWay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="12" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:MovieCard Movie="{Binding}" Clicked="OnMovieCardClicked" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
