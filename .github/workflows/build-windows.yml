@@ -1,1 +1,51 @@
+name: Build Windows EXE
 
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        arch: [x64]
+
+    steps:
+      - name: Kodları çek
+        uses: actions/checkout@v4
+
+      - name: .NET SDK kur
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Windows Desktop / WinUI workload'larını kontrol et
+        run: dotnet --info
+
+      - name: Bağımlılıkları geri yükle (restore)
+        run: dotnet restore FilmAI.Windows/FilmAI.Windows.csproj -r win-${{ matrix.arch }}
+
+      - name: Yayınla (publish) - tek dosya, self-contained .exe
+        run: >
+          dotnet publish FilmAI.Windows/FilmAI.Windows.csproj
+          -c Release
+          -r win-${{ matrix.arch }}
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:WindowsAppSDKSelfContained=true
+          -p:WindowsPackageType=None
+          -p:IncludeAllContentForSelfExtract=true
+          -o publish/win-${{ matrix.arch }}
+
+      - name: Yayınlanan dosyaları listele (kontrol amaçlı)
+        run: Get-ChildItem -Recurse publish/win-${{ matrix.arch }}
+
+      - name: .exe dosyasını artifact olarak yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FilmAI-Windows-${{ matrix.arch }}
+          path: publish/win-${{ matrix.arch }}/**
+          if-no-files-found: error
